@@ -2,54 +2,55 @@ import { Platform } from 'react-native';
 
 export const shadows = {
   sm: Platform.select({
-    ios: {
-      shadowColor: '#0F172A',
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.05,
-      shadowRadius: 2,
-    },
-    android: {
-      elevation: 2,
-    },
-    default: {
-      shadowColor: '#0F172A',
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.05,
-      shadowRadius: 2,
-    },
+    ios: `
+      shadow-color: #0F172A;
+      shadow-offset: 0px 1px;
+      shadow-opacity: 0.05;
+      shadow-radius: 2px;
+    `,
+    android: `
+      elevation: 2;
+    `,
+    default: `
+      shadow-color: #0F172A;
+      shadow-offset: 0px 1px;
+      shadow-opacity: 0.05;
+      shadow-radius: 2px;
+    `,
   }),
   md: Platform.select({
-    ios: {
-      shadowColor: '#0F172A',
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.08,
-      shadowRadius: 6,
-    },
-    android: {
-      elevation: 4,
-    },
-    default: {
-      shadowColor: '#0F172A',
-      shadowOffset: { width: 0, height: 3 },
-      shadowOpacity: 0.08,
-      shadowRadius: 6,
-    },
+    ios: `
+      shadow-color: #0F172A;
+      shadow-offset: 0px 3px;
+      shadow-opacity: 0.08;
+      shadow-radius: 6px;
+    `,
+    android: `
+      elevation: 4;
+    `,
+    default: `
+      shadow-color: #0F172A;
+      shadow-offset: 0px 3px;
+      shadow-opacity: 0.08;
+      shadow-radius: 6px;
+    `,
   }),
   lg: Platform.select({
-    ios: {
-      shadowColor: '#0F172A',
-      shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: 0.12,
-      shadowRadius: 12,
-    },
-    android: {
-      elevation: 8,
-    },
-    default: {
-      shadowColor: '#0F172A',
-      shadowOffset: { width: 0, height: 6 },
-      shadowOpacity: 0.12,
-      shadowRadius: 12,
-    },
+    ios: `
+      shadow-color: #0F172A;
+      shadow-offset: 0px 6px;
+      shadow-opacity: 0.12;
+      shadow-radius: 12px;
+    `,
+    android: `
+      elevation: 8;
+    `,
+    default: `
+      shadow-color: #0F172A;
+      shadow-offset: 0px 6px;
+      shadow-opacity: 0.12;
+      shadow-radius: 12px;
+    `,
   }),
 };
+
