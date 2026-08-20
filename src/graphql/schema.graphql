@@ -1,0 +1,121 @@
+type Word @model @auth(rules: [{ allow: private }, { allow: public, operations: [read] }]) {
+  id: ID!
+  word: String!
+  meaning: String!
+  example: String
+  category: String!
+  difficulty: String!
+  createdAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+enum LearningStatusEnum {
+  NEW
+  LEARNING
+  REMEMBERED
+  REVIEW
+}
+
+type LearningProgress @model @auth(rules: [{ allow: owner }]) {
+  id: ID!
+  userId: String!
+  wordId: String!
+  status: LearningStatusEnum!
+  attempts: Int!
+  correctCount: Int!
+  incorrectCount: Int!
+  lastReviewedAt: AWSDateTime!
+  updatedAt: AWSDateTime!
+}
+
+type EvaluationAnswer @model @auth(rules: [{ allow: owner }]) {
+  id: ID!
+  evaluationId: String!
+  wordId: String!
+  questionType: String!
+  userAnswer: String!
+  correctAnswer: String!
+  isCorrect: Boolean!
+}
+
+type Evaluation @model @auth(rules: [{ allow: owner }]) {
+  id: ID!
+  userId: String!
+  totalQuestions: Int!
+  correctAnswers: Int!
+  incorrectAnswers: Int!
+  score: Int!
+  percentage: Float!
+  createdAt: AWSDateTime!
+  answers: [EvaluationAnswer] @hasMany(indexName: "byEvaluation", fields: ["id"])
+}
+
+input CreateWordInput {
+  word: String!
+  meaning: String!
+  example: String
+  category: String!
+  difficulty: String!
+}
+
+input UpdateWordInput {
+  id: ID!
+  word: String
+  meaning: String
+  example: String
+  category: String
+  difficulty: String
+}
+
+input DeleteWordInput {
+  id: ID!
+}
+
+input SaveLearningProgressInput {
+  wordId: String!
+  status: LearningStatusEnum!
+  isRemembered: Boolean!
+}
+
+input EvaluationAnswerInput {
+  wordId: String!
+  questionType: String!
+  userAnswer: String!
+  correctAnswer: String!
+  isCorrect: Boolean!
+}
+
+input CreateEvaluationInput {
+  totalQuestions: Int!
+  correctAnswers: Int!
+  incorrectAnswers: Int!
+  score: Int!
+  percentage: Float!
+  answers: [EvaluationAnswerInput!]!
+}
+
+type Query {
+  listWords(filter: String, limit: Int, nextToken: String): WordConnection
+  getWord(id: ID!): Word
+  getUserProgress(userId: String!): [LearningProgress]
+  getEvaluationHistory(userId: String!, limit: Int): [Evaluation]
+}
+
+type Mutation {
+  createWord(input: CreateWordInput!): Word
+  updateWord(input: UpdateWordInput!): Word
+  deleteWord(input: DeleteWordInput!): Word
+  saveLearningProgress(input: SaveLearningProgressInput!): LearningProgress
+  createEvaluation(input: CreateEvaluationInput!): Evaluation
+}
+
+type Subscription {
+  onCreateWord: Word @aws_subscribe(mutations: ["createWord"])
+  onUpdateWord: Word @aws_subscribe(mutations: ["updateWord"])
+  onDeleteWord: Word @aws_subscribe(mutations: ["deleteWord"])
+}
+
+type WordConnection {
+  items: [Word!]!
+  nextToken: String
+}
