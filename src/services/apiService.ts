@@ -50,7 +50,7 @@ export const apiService = {
           return response.data as T;
         }
       } catch (error: any) {
-        console.warn('[AppSync GraphQL] Execution failed, falling back to local DynamoDB layer:', error?.message || error);
+        console.log('[AppSync GraphQL] Falling back to local offline storage:', error?.message || error);
       }
     }
 
