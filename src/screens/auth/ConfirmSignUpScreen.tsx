@@ -46,11 +46,12 @@ const GeneralErrorText = styled.Text`
 `;
 
 export const ConfirmSignUpScreen: React.FC<Props> = ({ navigation, route }) => {
-  const { confirmSignUp, isLoading, error, clearError } = useAuth();
+  const { confirmSignUp, resendConfirmationCode, isLoading, error, clearError } = useAuth();
   const email = route.params.email;
 
   const [code, setCode] = useState('');
   const [codeError, setCodeError] = useState('');
+  const [isResending, setIsResending] = useState(false);
 
   const handleConfirm = async () => {
     clearError();
@@ -70,6 +71,19 @@ export const ConfirmSignUpScreen: React.FC<Props> = ({ navigation, route }) => {
       );
     } catch {
       // Handled by context
+    }
+  };
+
+  const handleResend = async () => {
+    setIsResending(true);
+    clearError();
+    try {
+      await resendConfirmationCode(email);
+      Alert.alert('Code Resent', `A new verification code has been sent to ${email}.`);
+    } catch {
+      // Handled by context
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -111,6 +125,15 @@ export const ConfirmSignUpScreen: React.FC<Props> = ({ navigation, route }) => {
             onPress={handleConfirm}
             isLoading={isLoading}
             size="lg"
+          />
+
+          <Button
+            title="Resend Code"
+            variant="outline"
+            onPress={handleResend}
+            isLoading={isResending}
+            size="md"
+            style={{ marginTop: 12 }}
           />
         </FormCard>
       </Container>

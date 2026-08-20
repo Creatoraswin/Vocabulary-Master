@@ -1,4 +1,4 @@
-import { signIn, signUp, signOut, resetPassword, confirmResetPassword, confirmSignUp, getCurrentUser } from 'aws-amplify/auth';
+import { signIn, signUp, signOut, resetPassword, confirmResetPassword, confirmSignUp, resendSignUpCode, getCurrentUser } from 'aws-amplify/auth';
 import { getAmplifyStatus } from './amplifyConfig';
 import { storageService } from './storageService';
 import { APP_CONFIG } from '../constants/config';
@@ -50,6 +50,13 @@ export const authService = {
         await storageService.setItem(APP_CONFIG.storageKeys.AUTH_USER, user);
         return user;
       }
+
+      if (output.nextStep?.signInStep === 'CONFIRM_SIGN_UP') {
+        const err: any = new Error('CONFIRM_SIGN_UP_REQUIRED');
+        err.code = 'CONFIRM_SIGN_UP_REQUIRED';
+        throw err;
+      }
+
       throw new Error('Sign in requires additional confirmation.');
     }
 
@@ -116,6 +123,19 @@ export const authService = {
         confirmationCode: credentials.code.trim(),
       });
       return result.isSignUpComplete;
+    }
+
+    return true;
+  },
+
+  async resendConfirmationCode(email: string): Promise<boolean> {
+    const { isAwsConnected } = getAmplifyStatus();
+
+    if (isAwsConnected) {
+      await resendSignUpCode({
+        username: email.trim(),
+      });
+      return true;
     }
 
     return true;

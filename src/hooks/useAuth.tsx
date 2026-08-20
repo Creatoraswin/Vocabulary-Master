@@ -16,6 +16,7 @@ interface AuthContextType {
   signIn: (credentials: SignInCredentials) => Promise<User>;
   signUp: (credentials: SignUpCredentials) => Promise<{ isSignUpComplete: boolean; user: User }>;
   confirmSignUp: (credentials: ConfirmSignUpCredentials) => Promise<boolean>;
+  resendConfirmationCode: (email: string) => Promise<boolean>;
   forgotPassword: (email: string) => Promise<boolean>;
   confirmResetPassword: (credentials: ConfirmResetPasswordCredentials) => Promise<boolean>;
   signOut: () => Promise<void>;
@@ -95,6 +96,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const handleResendConfirmationCode = async (email: string) => {
+    setIsLoading(true);
+    setError(null);
+    try {
+      return await authService.resendConfirmationCode(email);
+    } catch (err: any) {
+      const msg = err?.message || 'Failed to resend confirmation code.';
+      setError(msg);
+      throw new Error(msg);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const handleForgotPassword = async (email: string) => {
     setIsLoading(true);
     setError(null);
@@ -146,6 +161,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         signIn: handleSignIn,
         signUp: handleSignUp,
         confirmSignUp: handleConfirmSignUp,
+        resendConfirmationCode: handleResendConfirmationCode,
         forgotPassword: handleForgotPassword,
         confirmResetPassword: handleConfirmResetPassword,
         signOut: handleSignOut,

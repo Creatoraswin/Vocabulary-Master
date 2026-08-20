@@ -130,7 +130,27 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
     try {
       await signIn({ email, password });
     } catch (err: any) {
-      // Handled by context error
+      if (
+        err?.message === 'CONFIRM_SIGN_UP_REQUIRED' ||
+        err?.code === 'CONFIRM_SIGN_UP_REQUIRED' ||
+        err?.message?.includes('confirmation') ||
+        err?.message?.includes('confirmed')
+      ) {
+        Alert.alert(
+          'Verification Required',
+          'Your account requires email verification. Please enter the verification code sent to your email.',
+          [
+            {
+              text: 'Enter Code',
+              onPress: () => navigation.navigate('ConfirmSignUp', { email: email.trim() }),
+            },
+            {
+              text: 'Cancel',
+              style: 'cancel',
+            },
+          ]
+        );
+      }
     }
   };
 
