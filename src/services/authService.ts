@@ -1,4 +1,4 @@
-import { signIn, signUp, signOut, resetPassword, confirmResetPassword, confirmSignUp, resendSignUpCode, getCurrentUser } from 'aws-amplify/auth';
+import { signIn, signUp, signOut, resetPassword, confirmResetPassword, confirmSignUp, resendSignUpCode, getCurrentUser, fetchUserAttributes } from 'aws-amplify/auth';
 import { getAmplifyStatus } from './amplifyConfig';
 import { storageService } from './storageService';
 import { APP_CONFIG } from '../constants/config';
@@ -17,10 +17,15 @@ export const authService = {
     if (isAwsConnected) {
       try {
         const user = await getCurrentUser();
+        let name = user.username;
+        try {
+          const attributes = await fetchUserAttributes();
+          if (attributes.name) name = attributes.name;
+        } catch {}
         return {
           id: user.userId,
           email: user.signInDetails?.loginId || user.username,
-          name: user.username,
+          name,
         };
       } catch {
         return null;
@@ -42,10 +47,15 @@ export const authService = {
 
       if (output.isSignedIn) {
         const currentUser = await getCurrentUser();
+        let name = credentials.email.split('@')[0];
+        try {
+          const attributes = await fetchUserAttributes();
+          if (attributes.name) name = attributes.name;
+        } catch {}
         const user: User = {
           id: currentUser.userId,
           email: credentials.email.trim(),
-          name: currentUser.username || credentials.email.split('@')[0],
+          name,
         };
         await storageService.setItem(APP_CONFIG.storageKeys.AUTH_USER, user);
         return user;
