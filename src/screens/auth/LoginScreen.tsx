@@ -136,23 +136,15 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
         err?.message?.includes('confirmation') ||
         err?.message?.includes('confirmed')
       ) {
-        Alert.alert(
-          'Verification Required',
-          'Your account requires email verification. Please enter the verification code sent to your email.',
-          [
-            {
-              text: 'Enter Code',
-              onPress: () => navigation.navigate('ConfirmSignUp', { email: email.trim() }),
-            },
-            {
-              text: 'Cancel',
-              style: 'cancel',
-            },
-          ]
-        );
+        navigation.navigate('ConfirmSignUp', { email: email.trim() });
       }
     }
   };
+
+  const isUnconfirmedError =
+    error === 'CONFIRM_SIGN_UP_REQUIRED' ||
+    error?.includes('confirmation') ||
+    error?.includes('confirmed');
 
   return (
     <ScreenContainer scrollable>
@@ -168,7 +160,17 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
         <FormCard>
           {error && (
             <GeneralErrorBox>
-              <GeneralErrorText>{error}</GeneralErrorText>
+              {isUnconfirmedError ? (
+                <TouchableOpacity
+                  onPress={() => navigation.navigate('ConfirmSignUp', { email: email.trim() })}
+                >
+                  <GeneralErrorText style={{ fontWeight: '600' }}>
+                    Email verification required. Tap here to enter your 6-digit verification code.
+                  </GeneralErrorText>
+                </TouchableOpacity>
+              ) : (
+                <GeneralErrorText>{error}</GeneralErrorText>
+              )}
             </GeneralErrorBox>
           )}
 
