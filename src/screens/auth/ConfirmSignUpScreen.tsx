@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert } from 'react-native';
 import styled from 'styled-components/native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
@@ -52,6 +52,10 @@ export const ConfirmSignUpScreen: React.FC<Props> = ({ navigation, route }) => {
   const [code, setCode] = useState('');
   const [codeError, setCodeError] = useState('');
   const [isResending, setIsResending] = useState(false);
+
+  useEffect(() => {
+    clearError();
+  }, []);
 
   const handleConfirm = async () => {
     clearError();
